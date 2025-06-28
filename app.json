@@ -21,7 +21,7 @@
   "formation": {
     "worker": {
       "quantity": 1,
-      "size": "basic"  // Use "basic", "standard-1x", "standard-2x", or "performance-m" etc.
+      "size": "basic"
     }
   },
   "addons": [],
