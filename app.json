@@ -1,0 +1,31 @@
+{
+  "name": "Terabox Auto Downloader",
+  "description": "Automatically downloads Terabox videos via API and sends them to your Telegram DM.",
+  "repository": "https://github.com/Bloodlinebots/Teradiirect",
+  "keywords": ["telegram", "terabox", "bot", "downloader"],
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Your bot token from @BotFather",
+      "required": true
+    },
+    "ADMIN_ID": {
+      "description": "Your Telegram numeric ID (e.g. 123456789)",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "basic"  // Use "basic", "standard-1x", "standard-2x", or "performance-m" etc.
+    }
+  },
+  "addons": [],
+  "scripts": {
+    "postdeploy": "echo ✅ Terabox bot deployed successfully!"
+  }
+}
