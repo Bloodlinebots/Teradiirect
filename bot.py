@@ -5,8 +5,11 @@ import aiohttp
 
 from telegram import Update, Bot
 from telegram.ext import (
-    ApplicationBuilder, CommandHandler,
-    MessageHandler, filters, ContextTypes
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters,
 )
 
 # ------------ Logging Setup ------------
@@ -51,11 +54,10 @@ async def process_links(bot: Bot):
         with open(LINK_FILE, "r") as f:
             links = [line.strip() for line in f if line.strip()]
 
+        done_links = set()
         if os.path.exists(DONE_FILE):
             with open(DONE_FILE, "r") as df:
                 done_links = set(line.strip() for line in df if line.strip())
-        else:
-            done_links = set()
 
         for link in links:
             if link in done_links:
@@ -71,7 +73,7 @@ async def process_links(bot: Bot):
                 await bot.send_video(chat_id=ADMIN_ID, video=direct_link, caption="📥 From Terabox")
                 with open(DONE_FILE, "a") as df:
                     df.write(link + "\n")
-                await asyncio.sleep(10)  # Delay to avoid spam
+                await asyncio.sleep(10)
             except Exception as e:
                 logger.error(f"Send failed: {e}")
                 await asyncio.sleep(5)
@@ -83,12 +85,12 @@ async def upload_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
 
-    doc = update.message.document
-    if not doc or not doc.file_name.endswith(".txt"):
+    document = update.message.document
+    if not document or not document.file_name.endswith(".txt"):
         await update.message.reply_text("❌ Please upload a valid `.txt` file.")
         return
 
-    file = await doc.get_file()
+    file = await document.get_file()
     await file.download_to_drive(LINK_FILE)
     await update.message.reply_text("✅ File uploaded. Processing started...")
 
@@ -100,7 +102,6 @@ async def main():
     app.add_handler(MessageHandler(filters.Document.ALL, upload_handler))
 
     asyncio.create_task(process_links(app.bot))
-
     await app.run_polling()
 
 if __name__ == "__main__":
